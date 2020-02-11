@@ -10,4 +10,4 @@ Currently this has only one useful handler, GetFontURLs(), which returns a line-
 
 GetFontNames.livecode
 
-Test LiveCode Stack showing a few examples of usage of FontTools.lcb. There's also some examples of using built-in LiveCode Font functions.
+Test LiveCode Stack showing a few examples of usage of FontTools.lcb. There's also some examples of using the built-in LiveCode Font functions.

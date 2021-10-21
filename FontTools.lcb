@@ -1,9 +1,9 @@
-library community.livecode.paulmcclernan.lcbctfontmanager
+library org.oxt.paulmcclernan.macfonttools
 
   use com.livecode.foreign
   use com.livecode.objc
 
-  metadata title is "FontTools"
+  metadata title is "Mac FontTools"
   metadata author is "Paul McClernan"
   metadata version is "0.1.0"
 

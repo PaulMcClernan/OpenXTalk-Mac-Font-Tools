@@ -1,5 +1,5 @@
-# LCMacFontStuff
-LiveCode Font related stuff for macOS
+# OpenXTalk macOS Font Tools
+OpenXTalk Font related stuff for macOS
 
 FontTools.lcb
 

@@ -1,0 +1,14 @@
+<package version="0.0">
+  <name>community.livecode.paulmcclernan.lcbctfontmanager</name>
+  <title>FontTools</title>
+  <author>Paul McClernan</author>
+  <version>0.1.0</version>
+  <license>community</license>
+  <type>library</type>
+  <requires name="com.livecode.objc"/>
+  <handler name="ObjC_NSArrayAlloc" parameters="" return="ObjcRetainedId"/>
+  <handler name="ObjC_NSArrayComponentsJoinedByString" parameters="in ObjcId,in ObjcId" return="ObjcId"/>
+  <handler name="c_CoreTextFontManagerCopyAvailableFontURLs" parameters="" return="ObjcRetainedId"/>
+  <handler name="NSArrayToString" parameters="in ObjcObject" return="string"/>
+  <handler name="GetFontURLs" parameters="" return="string"/>
+</package>

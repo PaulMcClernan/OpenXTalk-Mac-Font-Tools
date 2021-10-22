@@ -1,0 +1,22 @@
+Library: 
+
+Type: 
+
+author: Paul McClernan
+
+version: 0.1.0
+
+
+Name: GetFontURLs
+
+Type: handler
+
+Syntax: GetFontURLs()
+
+Summary: Returns the list of available font URLs.
+
+Returns: Line Delimited List of URLs.
+
+
+
+

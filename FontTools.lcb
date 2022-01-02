@@ -1,4 +1,4 @@
-library org.oxt.paulmcclernan.macfonttools
+library org.openxtalk.paulmcclernan.macfonttools
 
   use com.livecode.foreign
   use com.livecode.objc

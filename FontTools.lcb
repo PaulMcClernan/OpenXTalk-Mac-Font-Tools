@@ -1,44 +1,116 @@
-library org.openxtalk.paulmcclernan.macfonttools
+library org.openxtalk.library.macfonttools
 
   use com.livecode.foreign
   use com.livecode.objc
 
   metadata title is "Mac FontTools"
   metadata author is "Paul McClernan"
-  metadata version is "0.1.0"
+  metadata version is "0.2.0"
 
   public foreign handler ObjC_NSArrayAlloc() returns ObjcRetainedId binds to "objc:NSArray.+alloc"
   public foreign handler ObjC_NSArrayComponentsJoinedByString(in pObj as ObjcId, in pSeperator as ObjcId) returns ObjcId binds to "objc:NSArray.-componentsJoinedByString:"
 
   public foreign handler c_CoreTextFontManagerCopyAvailableFontURLs() returns ObjcRetainedId binds to "c:CoreText.framework>CTFontManagerCopyAvailableFontURLs"
 --  CFArrayRef CTFontManagerCopyAvailableFontURLs(void);
---- This function returns a retained reference to a CFArray of CFStringRef objects representing the URLs of the available fonts, or NULL on error.
+-- This function returns a retained reference to a CFArray of CFStringRef objects representing the URLs of the available fonts, or NULL on error.
 --  The caller is responsible for releasing the array.
 
 public handler NSArrayToString(in pNSArray as ObjcObject) returns String
   variable tNSArray as ObjcObject
   variable tNSString as ObjcObject
   variable tStr as String
-
   put "\r\n" into tStr
   unsafe
     put ObjC_NSArrayComponentsJoinedByString(pNSArray, StringToNSString(tStr)) into tNSString
   end unsafe
-
   return StringFromNSString(tNSString)
 end handler
 
-  /**
-  Summary: Returns the list of available font URLs.
+/**
+Summary: Returns the list of available font URIs.
 
-  Returns: Line Delimited List of URLs.
-  */
-  public handler GetFontURLs() returns String
+ Returns: Line Delimited List of Font URIs.
+*/
+public handler GetFontURLs() returns String
     variable tCFArray as ObjcObject
     unsafe
     put c_CoreTextFontManagerCopyAvailableFontURLs() into tCFArray
     end unsafe
     return NSArrayToString(tCFArray)
-  end handler
+end handler
 
-end library /* name */
+------- Bindings strings for Apple's NSFonts FontManager FontPanel etc.---------
+-- Get the Shared NSFontManager Instance:
+private foreign handler ObjC_NSFontManagerSharedFontManager() returns ObjcId binds to "objc:NSFontManager.+sharedFontManager"
+
+-- Get the NSFontManager Font Familes and font lidt:
+private foreign handler ObjC_NSFontManagerAvailableFontFamilies(in pNSFontManager as ObjcId ) returns ObjcId binds to "objc:NSFontManager.-availableFontFamilies"
+private foreign handler ObjC_NSFontManagerAvailableFonts(in pNSFontManager as ObjcId ) returns ObjcId binds to "objc:NSFontManager.-availableFonts"
+
+-- Getting the Shared NSFontPanel Instance:
+private foreign handler ObjC_NSFontPanelSharedFontPanel() returns ObjcId binds to "objc:NSFontPanel.+sharedFontPanel"
+-- Making the NSFontPanel Visible:
+private foreign handler ObjC_NSFontPanelOrderFront(in pFontPanel as ObjcId, in pSender as optional ObjcId) returns nothing binds to "objc:NSFontManager.-orderFrontFontPanel:"
+
+-- Setting the Font Panel Delegate:
+private foreign handler ObjC_NSFontPanelSetDelegate(in pFontPanel as ObjcId, in pDelegate as ObjcId) returns nothing binds to "objc:NSFontPanel.-setDelegate:"
+
+-- Running the Font Panel Modal Loop:
+private foreign handler ObjC_NSFontPanelRunModal(in pFontPanel as ObjcId) returns CUInt binds to "objc:NSFontPanel.-runModal"
+
+-- Getting the Selected Font:
+private foreign handler ObjC_NSFontPanelSelectedFont(in pFontPanel as ObjcId) returns ObjcId binds to "objc:NSFontPanel.-panelConvertFont:"
+
+-- Setting the Selected Font:
+private foreign handler ObjC_NSFontPanelSetPanelFont(in pFontPanel as ObjcId, in pFont as ObjcId, in pIsMultiple as Bool) returns nothing binds to "objc:NSFontPanel.-setPanelFont:isMultiple:"
+
+-- Here is an example of how you might use these bindings to create and display an NSFontPanel in a xBuilder script:
+variable mFontPanel as ObjcId
+variable mFontManager as ObjcId
+
+public handler ShowFontPanel() returns nothing
+  -- variable mFontPanel as ObjcId
+  variable tSelectedFont as ObjcId
+  unsafe
+     put ObjC_NSFontManagerSharedFontManager() into mFontManager
+    --  LogNSObjectClassName(mFontManager)
+     -- Get the shared NSFontPanel instance
+     put ObjC_NSFontPanelSharedFontPanel() into mFontPanel
+    --  LogNSObjectClassName(mFontPanel)
+     -- Order the font panel to the front (make it visible)
+     ObjC_NSFontPanelOrderFront( mFontManager, mFontPanel )
+     -- Get the currently selected font
+     -- put ObjC_NSFontPanelSelectedFont(mFontPanel) into tSelectedFont
+     -- Do something with the selected font, e.g. return font name as a text string
+   end unsafe
+end handler
+
+public handler NSFontManagerAvaialableFonts() returns String
+  variable tNSString as ObjcObject
+  variable tStr as String
+  put "\r\n" into tStr
+  variable tFonts as ObjcObject
+  unsafe
+     -- Get the shared NSFontManager instance
+    put ObjC_NSFontManagerSharedFontManager() into mFontManager
+    put ObjC_NSFontManagerAvailableFonts( mFontManager) into tFonts
+    put ObjC_NSArrayComponentsJoinedByString(tFonts, StringToNSString(tStr)) into tNSString
+  end unsafe
+  return StringFromNSString(tNSString)
+end handler
+
+public handler NSFontManagerAvaialableFontFamilies() returns String
+  variable tNSString as ObjcObject
+  variable tStr as String
+  put "\r\n" into tStr
+  variable tFontFamilies as ObjcObject
+  unsafe
+     -- Get the shared NSFontManager instance
+    put ObjC_NSFontManagerSharedFontManager() into mFontManager
+    put ObjC_NSFontManagerAvailableFontFamilies( mFontManager) into tFontFamilies
+    put ObjC_NSArrayComponentsJoinedByString(tFontFamilies, StringToNSString(tStr)) into tNSString
+  end unsafe
+   return StringFromNSString(tNSString)
+end handler
+
+end library

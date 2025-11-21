@@ -1,6 +1,6 @@
 <package version="0.0">
-  <name>community.livecode.paulmcclernan.lcbctfontmanager</name>
-  <title>FontTools</title>
+  <name>org.openxtalk.paulmcclernan.macfonttools</name>
+  <title>Mac FontTools</title>
   <author>Paul McClernan</author>
   <version>0.1.0</version>
   <license>community</license>

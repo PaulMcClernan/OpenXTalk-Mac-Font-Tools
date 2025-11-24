@@ -8,7 +8,6 @@
   <requires name="com.livecode.objc"/>
   <requires name="com.livecode.foreign"/>
   <requires name="com.livecode.typeconvert"/>
-  <requires name="com.livecode.engine"/>
   <requires name="com.livecode.array"/>
   <requires name="com.livecode.list"/>
   <requires name="com.livecode.arithmetic"/>

@@ -141,27 +141,28 @@ public handler NSFontManagerAvaialableMembersOfFontFamily(in pFamName as String)
    return StringFromNSString(tNSString)
 end handler
 
-private foreign handler ObjC_NSFontManagerAvailableFontNamesWithTraits( in pNSFontManager as ObjcId, in pFontTraits as ObjcId ) returns optional ObjcId binds to "objc:NSFontManager.-availableFontNamesWithTraits:"
+private foreign handler ObjC_NSFontManagerAvailableFontNamesWithTraits( in pNSFontManager as ObjcId, in pFontTraits as CULong ) returns optional ObjcId binds to "objc:NSFontManager.-availableFontNamesWithTraits:"
 public handler NSFontManagerAvailableFontNamesWithTraits(in pTraits as String) returns String
    variable tNSString as ObjcObject
    variable tFontsNSArray as ObjcObject
+   variable tString as String
 
    variable tCFLF as String
    put "\r\n" into tCFLF
 
-   variable tTraitMask as Number
+   variable tTraitMask as CULong
    put 0 into tTraitMask
 
    variable tTrait as String
    variable tTraits as List
    split pTraits by "," into tTraits
-   log tTraits
-
+   -- log tTraits
    unsafe
      -- Get the shared NSFontManager instance
      put ObjC_NSFontManagerSharedFontManager() into mFontManager
      -- - (NSArray<NSString *> *) NSFontManagerAvailableFontNamesWithTraits:(NSFontTraitMask) someTraits;
       repeat for each element tTrait in tTraits
+         -- log tTrait
          if tTrait is "Italic" then
             add 1 to tTraitMask
          end if
@@ -193,10 +194,16 @@ public handler NSFontManagerAvailableFontNamesWithTraits(in pTraits as String) r
             add 1024 to tTraitMask
          end if
       end repeat
-      put ObjC_NSFontManagerAvailableFontNamesWithTraits( mFontManager, NumberToNSNumber(tTraitMask)) into tFontsNSArray
-      put ObjC_NSArrayComponentsJoinedByString(tFontsNSArray, StringToNSString( tCFLF )) into tNSString
+      -- log tTraitMask
+      put ObjC_NSFontManagerAvailableFontNamesWithTraits( mFontManager, tTraitMask ) into tFontsNSArray
+      -- log tFontsNSArray
+      put NSArrayToString( tFontsNSArray ) into tString
+      -- log [tString]
+      -- put ObjC_NSArrayComponentsJoinedByString(tFontsNSArray, StringToNSString( tCFLF )) into tNSString
+      -- log tNSString
    end unsafe
-   return StringFromNSString(tNSString)
+   return tString
+   -- return StringFromNSString(tNSString)
    -- NSFontTraitMask:
       -- NSItalicFontMask			   = 0x00000001 -- 1
       -- NSBoldFontMask			   = 0x00000002 -- 2

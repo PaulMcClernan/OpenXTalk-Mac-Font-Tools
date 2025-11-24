@@ -2,7 +2,6 @@ import module org.openxtalk.library.macfonttools
   use com.livecode.objc
   use com.livecode.foreign
   use com.livecode.typeconvert
-  use com.livecode.engine
   use com.livecode.array
   use com.livecode.list
   use com.livecode.arithmetic

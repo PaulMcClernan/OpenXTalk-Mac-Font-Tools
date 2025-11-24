@@ -2,10 +2,13 @@ library org.openxtalk.library.macfonttools
 
   use com.livecode.foreign
   use com.livecode.objc
+  use com.livecode.array
+  use com.livecode.type
+  use com.livecode.typeconvert
 
-  metadata title is "Mac FontTools"
+  metadata title is "FontTools (Mac)"
   metadata author is "Paul McClernan"
-  metadata version is "0.2.0"
+  metadata version is "0.3.0"
 
   public foreign handler ObjC_NSArrayAlloc() returns ObjcRetainedId binds to "objc:NSArray.+alloc"
   public foreign handler ObjC_NSArrayComponentsJoinedByString(in pObj as ObjcId, in pSeperator as ObjcId) returns ObjcId binds to "objc:NSArray.-componentsJoinedByString:"
@@ -42,28 +45,22 @@ end handler
 ------- Bindings strings for Apple's NSFonts FontManager FontPanel etc.---------
 -- Get the Shared NSFontManager Instance:
 private foreign handler ObjC_NSFontManagerSharedFontManager() returns ObjcId binds to "objc:NSFontManager.+sharedFontManager"
-
 -- Get the NSFontManager Font Familes and font lidt:
 private foreign handler ObjC_NSFontManagerAvailableFontFamilies(in pNSFontManager as ObjcId ) returns ObjcId binds to "objc:NSFontManager.-availableFontFamilies"
 private foreign handler ObjC_NSFontManagerAvailableFonts(in pNSFontManager as ObjcId ) returns ObjcId binds to "objc:NSFontManager.-availableFonts"
-
+private foreign handler ObjC_NSFontManagerAvailableMembers( in pNSFontManager as ObjcId, in pFontFamNSString as ObjcId ) returns optional ObjcId binds to "objc:NSFontManager.-availableMembersOfFontFamily:"
 -- Getting the Shared NSFontPanel Instance:
 private foreign handler ObjC_NSFontPanelSharedFontPanel() returns ObjcId binds to "objc:NSFontPanel.+sharedFontPanel"
 -- Making the NSFontPanel Visible:
 private foreign handler ObjC_NSFontPanelOrderFront(in pFontPanel as ObjcId, in pSender as optional ObjcId) returns nothing binds to "objc:NSFontManager.-orderFrontFontPanel:"
-
 -- Setting the Font Panel Delegate:
 private foreign handler ObjC_NSFontPanelSetDelegate(in pFontPanel as ObjcId, in pDelegate as ObjcId) returns nothing binds to "objc:NSFontPanel.-setDelegate:"
-
 -- Running the Font Panel Modal Loop:
 private foreign handler ObjC_NSFontPanelRunModal(in pFontPanel as ObjcId) returns CUInt binds to "objc:NSFontPanel.-runModal"
-
 -- Getting the Selected Font:
 private foreign handler ObjC_NSFontPanelSelectedFont(in pFontPanel as ObjcId) returns ObjcId binds to "objc:NSFontPanel.-panelConvertFont:"
-
 -- Setting the Selected Font:
 private foreign handler ObjC_NSFontPanelSetPanelFont(in pFontPanel as ObjcId, in pFont as ObjcId, in pIsMultiple as Bool) returns nothing binds to "objc:NSFontPanel.-setPanelFont:isMultiple:"
-
 -- Here is an example of how you might use these bindings to create and display an NSFontPanel in a xBuilder script:
 variable mFontPanel as ObjcId
 variable mFontManager as ObjcId
@@ -111,6 +108,109 @@ public handler NSFontManagerAvaialableFontFamilies() returns String
     put ObjC_NSArrayComponentsJoinedByString(tFontFamilies, StringToNSString(tStr)) into tNSString
   end unsafe
    return StringFromNSString(tNSString)
+end handler
+
+public handler NSFontManagerAvaialableMembersOfFontFamily(in pFamName as String) returns String
+  variable tNSString as ObjcObject
+  variable tFontFamMembers as ObjcObject
+  variable tStr as String
+  put "\r\n" into tStr
+  unsafe
+     -- Get the shared NSFontManager instance
+    put ObjC_NSFontManagerSharedFontManager() into mFontManager
+    put ObjC_NSFontManagerAvailableMembers( mFontManager, StringToNSString(pFamName)) into tFontFamMembers
+    -- tFontFamMembers is an NSArray each element contains
+    /*
+    Each entry of the returned NSArray is another NSArray with four members, as follows:
+         1- The PostScript font name, as an NSString object.
+         2- The part of the font name used in the font panel that’s not the font name, as an NSString object.
+            This value is not localized—for example, "Roman", "Italic", or "Bold".
+         3- The font’s weight, as an NSNumber.
+         4- The font’s traits, as an NSNumber.
+      The members of the family are arranged in the font panel order (narrowest to widest, lightest to boldest, plain to italic).
+      For example, if you call availableMembersOfFontFamily:@"Times", it might return an array like this:
+      (
+      ("Times-Roman", "Roman", 5, 4),
+      ("Times-Italic", "Italic", 6, 5),
+      ("Times-Bold", "Bold", 9, 2),
+      ("Times-BoldItalic", "Bold Italic", 9, 3)
+      )
+     */
+    put ObjC_NSArrayComponentsJoinedByString(tFontFamMembers, StringToNSString(tStr)) into tNSString
+  end unsafe
+   return StringFromNSString(tNSString)
+end handler
+
+private foreign handler ObjC_NSFontManagerAvailableFontNamesWithTraits( in pNSFontManager as ObjcId, in pFontTraits as ObjcId ) returns optional ObjcId binds to "objc:NSFontManager.-availableFontNamesWithTraits:"
+public handler NSFontManagerAvailableFontNamesWithTraits(in pTraits as String) returns String
+   variable tNSString as ObjcObject
+   variable tFontsNSArray as ObjcObject
+
+   variable tCFLF as String
+   put "\r\n" into tCFLF
+
+   variable tTraitMask as Number
+   put 0 into tTraitMask
+
+   variable tTrait as String
+   variable tTraits as List
+   split pTraits by "," into tTraits
+   log tTraits
+
+   unsafe
+     -- Get the shared NSFontManager instance
+     put ObjC_NSFontManagerSharedFontManager() into mFontManager
+     -- - (NSArray<NSString *> *) NSFontManagerAvailableFontNamesWithTraits:(NSFontTraitMask) someTraits;
+      repeat for each element tTrait in tTraits
+         if tTrait is "Italic" then
+            add 1 to tTraitMask
+         end if
+         if tTrait is "Bold" then
+            add 2 to tTraitMask
+         end if
+         if tTrait is "Standard" then
+            add 8 to tTraitMask
+         end if
+         if tTrait is "Narrow" then
+            add 16 to tTraitMask
+         end if
+         if tTrait is "Expanded" then
+            add 32 to tTraitMask
+         end if
+         if tTrait is "Condensed" then
+            add 64 to tTraitMask
+         end if
+         if tTrait is "Smallcaps" then
+            add 128 to tTraitMask
+         end if
+         if tTrait is "Poster" then
+            add 256 to tTraitMask
+         end if
+         if tTrait is "Compressed" then
+            add 512 to tTraitMask
+         end if
+         if tTrait is "FixedPitch" then
+            add 1024 to tTraitMask
+         end if
+      end repeat
+      put ObjC_NSFontManagerAvailableFontNamesWithTraits( mFontManager, NumberToNSNumber(tTraitMask)) into tFontsNSArray
+      put ObjC_NSArrayComponentsJoinedByString(tFontsNSArray, StringToNSString( tCFLF )) into tNSString
+   end unsafe
+   return StringFromNSString(tNSString)
+   -- NSFontTraitMask:
+      -- NSItalicFontMask			   = 0x00000001 -- 1
+      -- NSBoldFontMask			   = 0x00000002 -- 2
+      -- NSUnboldFontMask			   = 0x00000004 -- 4
+      -- NSNonStandardCharacterSetFontMask = 0x00000008 -- 8
+      -- NSNarrowFontMask			   = 0x00000010 -- 16
+      -- NSExpandedFontMask			= 0x00000020 -- 32
+      -- NSCondensedFontMask			= 0x00000040 -- 64
+      -- NSSmallCapsFontMask			= 0x00000080 -- 128
+      -- NSPosterFontMask			   = 0x00000100 -- 256
+      -- NSCompressedFontMask		= 0x00000200 -- 512
+      -- NSFixedPitchFontMask		= 0x00000400 -- 1024
+      -- NSUnitalicFontMask			= 0x01000000 -- 16777216
+   -- some traits are mutually exclusive like NSExpanded and NSCondensed.
 end handler
 
 end library

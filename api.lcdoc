@@ -4,7 +4,7 @@ Type:
 
 author: Paul McClernan
 
-version: 0.1.0
+version: 0.3.0
 
 
 Name: GetFontURLs
@@ -13,9 +13,9 @@ Type: handler
 
 Syntax: GetFontURLs()
 
-Summary: Returns the list of available font URLs.
+Summary: Returns the list of available font URIs.
 
-Returns: Line Delimited List of URLs.
+Returns: Line Delimited List of Font URIs.
 
 
 

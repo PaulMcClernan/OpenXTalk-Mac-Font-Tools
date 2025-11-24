@@ -1,0 +1,23 @@
+import module org.openxtalk.library.macfonttools
+  use com.livecode.objc
+  use com.livecode.foreign
+  use com.livecode.typeconvert
+  use com.livecode.engine
+  use com.livecode.array
+  use com.livecode.list
+  use com.livecode.arithmetic
+  use com.livecode.binary
+  use com.livecode.logic
+  use com.livecode.string
+  use com.livecode.type
+  foreign handler ObjC_NSArrayAlloc() returns ObjcRetainedId
+  foreign handler ObjC_NSArrayComponentsJoinedByString(in pObj as ObjcId, in pSeperator as ObjcId) returns ObjcId
+  foreign handler c_CoreTextFontManagerCopyAvailableFontURLs() returns ObjcRetainedId
+  handler NSArrayToString(in pNSArray as ObjcObject) returns String
+  handler GetFontURLs() returns String
+  handler ShowFontPanel() returns nothing
+  handler NSFontManagerAvaialableFonts() returns String
+  handler NSFontManagerAvaialableFontFamilies() returns String
+  handler NSFontManagerAvaialableMembersOfFontFamily(in pFamName as String) returns String
+  handler NSFontManagerAvailableFontNamesWithTraits(in pFamName as String) returns String
+end module

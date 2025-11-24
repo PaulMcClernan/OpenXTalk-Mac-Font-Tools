@@ -1,14 +1,29 @@
 <package version="0.0">
-  <name>org.openxtalk.paulmcclernan.macfonttools</name>
-  <title>Mac FontTools</title>
+  <name>org.openxtalk.library.macfonttools</name>
+  <title>FontTools (Mac)</title>
   <author>Paul McClernan</author>
-  <version>0.1.0</version>
+  <version>0.3.0</version>
   <license>community</license>
   <type>library</type>
   <requires name="com.livecode.objc"/>
+  <requires name="com.livecode.foreign"/>
+  <requires name="com.livecode.typeconvert"/>
+  <requires name="com.livecode.engine"/>
+  <requires name="com.livecode.array"/>
+  <requires name="com.livecode.list"/>
+  <requires name="com.livecode.arithmetic"/>
+  <requires name="com.livecode.binary"/>
+  <requires name="com.livecode.logic"/>
+  <requires name="com.livecode.string"/>
+  <requires name="com.livecode.type"/>
   <handler name="ObjC_NSArrayAlloc" parameters="" return="ObjcRetainedId"/>
   <handler name="ObjC_NSArrayComponentsJoinedByString" parameters="in ObjcId,in ObjcId" return="ObjcId"/>
   <handler name="c_CoreTextFontManagerCopyAvailableFontURLs" parameters="" return="ObjcRetainedId"/>
   <handler name="NSArrayToString" parameters="in ObjcObject" return="string"/>
   <handler name="GetFontURLs" parameters="" return="string"/>
+  <handler name="ShowFontPanel" parameters="" return="nothing"/>
+  <handler name="NSFontManagerAvaialableFonts" parameters="" return="string"/>
+  <handler name="NSFontManagerAvaialableFontFamilies" parameters="" return="string"/>
+  <handler name="NSFontManagerAvaialableMembersOfFontFamily" parameters="in string" return="string"/>
+  <handler name="NSFontManagerAvailableFontNamesWithTraits" parameters="in string" return="string"/>
 </package>

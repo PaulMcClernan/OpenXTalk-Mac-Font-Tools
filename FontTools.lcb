@@ -10,6 +10,47 @@ library org.openxtalk.library.macfonttools
   metadata author is "Paul McClernan"
   metadata version is "0.3.0"
 
+
+  private type NSUInteger is CULong
+
+  private foreign handler ObjC_NSAppWindowWithWindowNumber(in pObj as ObjcId, in pWindowNumber as CLong) returns ObjcId binds to "objc:NSApplication.-windowWithWindowNumber:"
+
+  private foreign handler ObjC_NSApplicationSharedApplication() returns ObjcId binds to "objc:NSApplication.+sharedApplication"
+  private foreign handler ObjC_NSApplicationGetTargetForAction(in pNSApp as ObjcId, in pSelectorNSStr as ObjcId ) returns ObjcId binds to "objc:NSApplication.-targetForAction:"
+  -- Returns the object that receives the action message specified by the given selector.
+
+  private foreign handler objC_NSURLURLWithString(in pURLString as ObjcId) returns ObjcId binds to "objc:NSURL.+URLWithString:"
+  private foreign handler objC_NSURLfileOrDirURLWithPath(in pPathString as ObjcId, in pIsDir as CBool) returns ObjcId binds to "objc:.NSURL.+fileURLWithPath:isDirectory:"
+  private foreign handler objC_NSURLfileURLWithPath(in pPathString as ObjcId) returns ObjcId binds to "objc:NSURL.+fileURLWithPath:"
+  private foreign handler objC_NSURLGetAbsoluteString(in pURLString as ObjcId) returns ObjcId binds to "objc:NSURL.absoluteString"
+  private foreign handler objC_NSURLGetPath(in pURLString as ObjcId) returns ObjcId binds to "objc:NSURL.path"
+  private foreign handler c_NSClassFromString(in pClassNameString as ObjcId) returns ObjcId binds to "c:NSClassFromString"
+
+  private foreign handler objC_NSErrorAlloc() returns ObjcId binds to "objc:NSError.+alloc"
+  private foreign handler objC_NSObjectRetain(in pNSObj as ObjcId) returns ObjcId binds to "objc:NSObject.-retain"
+  private foreign handler objC_NSObjectAutoRealease(in pNSObj as ObjcId) returns ObjcId binds to "objc:NSObject.-autorelease"
+  private foreign handler objC_NSObjectRelease(in pNSObj as ObjcId) returns nothing binds to "objc:NSObject.-release"
+  private foreign handler objC_NSObjectDescription(in pNSObj as optional ObjcId) returns ObjcId binds to "objc:NSObject.description"
+  private foreign handler objC_NSObjectClassName(in pNSObj as ObjcId) returns ObjcId binds to "objc:NSObject.className"
+  private foreign handler objC_NSObjectGetSuperClass(in pNSObj as ObjcId) returns ObjcRetainedId binds to "c:NObject.+superclass:"
+
+  -------------------------------------------------------------------- Utility Handlers ----------------------------------------------------------------------------
+  public handler LogNSObjectClassName(in tNSObj as optional ObjcId)
+     variable tOSStatus as CSInt
+     variable tNSStrObj as optional ObjcId
+     variable tStr as optional String
+     if tNSObj is not nothing then
+     unsafe
+        put objC_NSObjectClassName(tNSObj) into tNSStrObj
+        put StringFromNSString(tNSStrObj) into tStr
+        log tStr
+     end unsafe
+     else
+        log "No Object"
+     end if
+  end handler
+
+
   public foreign handler ObjC_NSArrayAlloc() returns ObjcRetainedId binds to "objc:NSArray.+alloc"
   public foreign handler ObjC_NSArrayComponentsJoinedByString(in pObj as ObjcId, in pSeperator as ObjcId) returns ObjcId binds to "objc:NSArray.-componentsJoinedByString:"
 
@@ -49,6 +90,13 @@ private foreign handler ObjC_NSFontManagerSharedFontManager() returns ObjcId bin
 private foreign handler ObjC_NSFontManagerAvailableFontFamilies(in pNSFontManager as ObjcId ) returns ObjcId binds to "objc:NSFontManager.-availableFontFamilies"
 private foreign handler ObjC_NSFontManagerAvailableFonts(in pNSFontManager as ObjcId ) returns ObjcId binds to "objc:NSFontManager.-availableFonts"
 private foreign handler ObjC_NSFontManagerAvailableMembers( in pNSFontManager as ObjcId, in pFontFamNSString as ObjcId ) returns optional ObjcId binds to "objc:NSFontManager.-availableMembersOfFontFamily:"
+
+private foreign handler ObjC_NSFontCollectionAllCollectionNames( in pNSFontCollection as ObjcId ) returns ObjcId binds to "objc:NSFontCollection.allCollectionNames"
+-- NSFontCollection CollectionNames is deprecated as of macOS 11 (BigSur)
+private foreign handler ObjC_NSFontCollectionCollectionNames( in pNSFontCollection as ObjcId ) returns ObjcId binds to "objc:NSFontCollection.allFontCollectionNames"
+private foreign handler ObjC_NSFontCollectionAlloc() returns  ObjcRetainedId binds to "objc:NSFontCollection.+alloc"
+private foreign handler ObjC_NSFontCollectionInit( in pNSFontCollection as ObjcId ) returns ObjcId binds to "objc:NSFontCollection.-init"
+
 -- Getting the Shared NSFontPanel Instance:
 private foreign handler ObjC_NSFontPanelSharedFontPanel() returns ObjcId binds to "objc:NSFontPanel.+sharedFontPanel"
 -- Making the NSFontPanel Visible:
@@ -106,6 +154,27 @@ public handler NSFontManagerAvaialableFontFamilies() returns String
     put ObjC_NSFontManagerSharedFontManager() into mFontManager
     put ObjC_NSFontManagerAvailableFontFamilies( mFontManager) into tFontFamilies
     put ObjC_NSArrayComponentsJoinedByString(tFontFamilies, StringToNSString(tStr)) into tNSString
+  end unsafe
+   return StringFromNSString(tNSString)
+end handler
+
+public handler NSFontCollectionAllCollectionNames() returns String
+  variable tNSString as ObjcObject
+  variable tNSAppSharedApp as ObjcObject
+  variable tNSFontCollection as ObjcObject
+
+  variable tFontCollectionNames as optional ObjcObject
+  variable tStr as String
+  put "\r\n" into tStr
+  unsafe
+    --  put NSApplicationSharedApplication() into tNSAppSharedApp
+     put ObjC_NSFontCollectionAlloc() into tNSFontCollection
+     put ObjC_NSFontCollectionInit( tNSFontCollection ) into tNSFontCollection
+     --  log tNSFontCollection
+    LogNSObjectClassName( tNSFontCollection )
+
+    put ObjC_NSFontCollectionAllCollectionNames( tNSFontCollection ) into tFontCollectionNames
+    put ObjC_NSArrayComponentsJoinedByString(tFontCollectionNames, StringToNSString(tStr)) into tNSString
   end unsafe
    return StringFromNSString(tNSString)
 end handler

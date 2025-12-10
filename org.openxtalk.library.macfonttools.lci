@@ -17,8 +17,7 @@ import module org.openxtalk.library.macfonttools
   handler NSArrayToString(in pNSArray as ObjcObject) returns String
   handler GetFontURLs() returns String
   handler ShowFontPanel() returns nothing
-  handler NSFontTitleBarFont(in pSize as CUInt) returns String
-  handler NSFontSystemFont(in pSize as CUInt) returns String
+  handler NSFontSystemFonts() returns String
   handler NSFontSystemFontForControlSize(in pSize as CUInt) returns CUInt
   handler NSFontManagerAvaialableFonts() returns String
   handler NSFontManagerAvaialableFontFamilies() returns String

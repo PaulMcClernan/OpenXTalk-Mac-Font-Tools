@@ -114,14 +114,16 @@ private foreign handler ObjC_NSFontTitleBarFontOfSize(in pSize as CUInt ) return
 private foreign handler ObjC_NSFontPaletteFontOfSize(in pSize as CUInt ) returns ObjcId binds to "objc:NSFont.+paletteFontOfSize:"
 private foreign handler ObjC_NSFontToolTipsFontOfSize(in pSize as CUInt ) returns ObjcId binds to "objc:NSFont.+toolTipsFontOfSize:"
 
+---- NSFONT PROPERTIES ----
 private foreign handler ObjC_NSFontFamilyName( in NSFont as ObjcId ) returns ObjcId binds to "objc:NSFont.familyName"
 private foreign handler ObjC_NSFontName( in NSFont as ObjcId ) returns ObjcId binds to "objc:NSFont.fontName"
 private foreign handler ObjC_NSFontDisplayName( in NSFont as ObjcId ) returns ObjcId binds to "objc:NSFont.displayName"
 private foreign handler ObjC_NSFontPointSize( in NSFont as ObjcId ) returns NaturalFloat binds to "objc:NSFont.pointSize"
-private foreign handler ObjC_NSFontSmallSystemFontSize() returns NaturalFloat binds to "objc:NSFont.smallSystemFontSize"
-
 private foreign handler ObjC_NSFontGlyphCount( in NSFont as ObjcId ) returns CUInt binds to "objc:NSFont.numberOfGlyphs"
+
 --- NOT WORKING
+private foreign handler ObjC_NSFontSmallSystemFontSize() returns NaturalFloat binds to "objc:NSFont.smallSystemFontSize"
+--- NOT WORKING:
 private foreign handler ObjC_NSFontSystemFontSizeForControlSize( in NSFont as ObjcId, in pCtrlSize as CUInt ) returns CFloat binds to "objc:NSFont.-systemFontSizeForControlSize:"
 
 /*
@@ -182,7 +184,7 @@ public handler ShowFontPanel() returns nothing
    end unsafe
 end handler
 
-public handler NSFontTitleBarFont(in pSize as CUInt ) returns String
+public handler NSFontSystemFonts() returns String
   variable tNSString as ObjcId
   variable tNSFont as ObjcId
   variable tNSNumber as ObjcId
@@ -190,60 +192,131 @@ public handler NSFontTitleBarFont(in pSize as CUInt ) returns String
   variable tStr as String
   put "\r\n" into tStr
   unsafe
-     put ObjC_NSFontTitleBarFontOfSize(pSize) into tNSFont
+    put "SYSTEM FONT (Regular):" into tStr
+    put ObjC_NSFontSystemFontOfSize(0) into tNSFont
     -- LogNSObjectClassName( tNSFont )
-
 	put ObjC_NSFontName(tNSFont ) into tNSString
-	put "Font Name:" & StringFromNSString(tNSString) into tStr
+	put "\nFont Name:" & StringFromNSString(tNSString) after tStr
 	-- set the textFont of stack "Home" to ".AppleSystemUIFont" --  this seems to work!
-
 	put ObjC_NSFontDisplayName(tNSFont ) into tNSString
 	put "\nDisplay Name:" & StringFromNSString(tNSString) after tStr
       -- set the textFont of stack "Home" to "System Font" --  this also seems to work!
-
-      put ObjC_NSFontFamilyName(tNSFont) into tNSString
+   put ObjC_NSFontFamilyName(tNSFont) into tNSString
  	put "\nFamily Name:" & StringFromNSString(tNSString) after tStr
-
 	put "\nPoint Size:" & ObjC_NSFontPointSize(tNSFont) formatted as string after tStr
-
 	put "\nGlyph Count:" & ObjC_NSFontGlyphCount(tNSFont) formatted as string after tStr
 
+  put "\n\nSYSTEM FONT (Bold):" after tStr
+  put ObjC_NSFontBoldSystemFontOfSize(0) into tNSFont
+  put ObjC_NSFontName(tNSFont ) into tNSString
+  put "\nFont Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontDisplayName(tNSFont ) into tNSString
+  put "\nDisplay Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontFamilyName(tNSFont) into tNSString
+  put "\nFamily Name:" & StringFromNSString(tNSString) after tStr
+  put "\nPoint Size:" & ObjC_NSFontPointSize(tNSFont) formatted as string after tStr
+  put "\nGlyph Count:" & ObjC_NSFontGlyphCount(tNSFont) formatted as string after tStr
+
+  put "\n\nLABEL FONT:" after tStr
+  put ObjC_NSFontLabelFontOfSize(0) into tNSFont
+  put ObjC_NSFontName(tNSFont ) into tNSString
+  put "\nFont Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontDisplayName(tNSFont ) into tNSString
+  put "\nDisplay Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontFamilyName(tNSFont) into tNSString
+  put "\nFamily Name:" & StringFromNSString(tNSString) after tStr
+  put "\nPoint Size:" & ObjC_NSFontPointSize(tNSFont) formatted as string after tStr
+  put "\nGlyph Count:" & ObjC_NSFontGlyphCount(tNSFont) formatted as string after tStr
+
+  put "\n\nMESSAGE FONT:" after tStr
+  put ObjC_NSFontMessageFontOfSize(0) into tNSFont
+  put ObjC_NSFontName(tNSFont ) into tNSString
+  put "\nFont Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontDisplayName(tNSFont ) into tNSString
+  put "\nDisplay Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontFamilyName(tNSFont) into tNSString
+  put "\nFamily Name:" & StringFromNSString(tNSString) after tStr
+  put "\nPoint Size:" & ObjC_NSFontPointSize(tNSFont) formatted as string after tStr
+  put "\nGlyph Count:" & ObjC_NSFontGlyphCount(tNSFont) formatted as string after tStr
+
+  put "\n\nMENUBAR FONT:" after tStr
+  put ObjC_NSFontMenuBarFontOfSize(0) into tNSFont
+  put ObjC_NSFontName(tNSFont ) into tNSString
+  put "\nFont Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontDisplayName(tNSFont ) into tNSString
+  put "\nDisplay Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontFamilyName(tNSFont) into tNSString
+  put "\nFamily Name:" & StringFromNSString(tNSString) after tStr
+  put "\nPoint Size:" & ObjC_NSFontPointSize(tNSFont) formatted as string after tStr
+  put "\nGlyph Count:" & ObjC_NSFontGlyphCount(tNSFont) formatted as string after tStr
+
+  put "\n\nMENU FONT:" after tStr
+  put ObjC_NSFontMenuFontOfSize(0) into tNSFont
+  put ObjC_NSFontName(tNSFont ) into tNSString
+  put "\nFont Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontDisplayName(tNSFont ) into tNSString
+  put "\nDisplay Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontFamilyName(tNSFont) into tNSString
+  put "\nFamily Name:" & StringFromNSString(tNSString) after tStr
+  put "\nPoint Size:" & ObjC_NSFontPointSize(tNSFont) formatted as string after tStr
+  put "\nGlyph Count:" & ObjC_NSFontGlyphCount(tNSFont) formatted as string after tStr
+
+  put "\n\nCONTROL CONTENT FONT:" after tStr
+  put ObjC_NSFontControlContentFontOfSize(0) into tNSFont
+  put ObjC_NSFontName(tNSFont ) into tNSString
+  put "\nFont Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontDisplayName(tNSFont ) into tNSString
+  put "\nDisplay Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontFamilyName(tNSFont) into tNSString
+  put "\nFamily Name:" & StringFromNSString(tNSString) after tStr
+  put "\nPoint Size:" & ObjC_NSFontPointSize(tNSFont) formatted as string after tStr
+  put "\nGlyph Count:" & ObjC_NSFontGlyphCount(tNSFont) formatted as string after tStr
+
+  put "\n\nTITLE BAR FONT:" after tStr
+  put ObjC_NSFontTitleBarFontOfSize(0) into tNSFont
+  put ObjC_NSFontName(tNSFont ) into tNSString
+  put "\nFont Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontDisplayName(tNSFont ) into tNSString
+  put "\nDisplay Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontFamilyName(tNSFont) into tNSString
+  put "\nFamily Name:" & StringFromNSString(tNSString) after tStr
+  put "\nPoint Size:" & ObjC_NSFontPointSize(tNSFont) formatted as string after tStr
+  put "\nGlyph Count:" & ObjC_NSFontGlyphCount(tNSFont) formatted as string after tStr
+
+  put "\n\nTITLE BAR FONT:" after tStr
+  put ObjC_NSFontTitleBarFontOfSize(0) into tNSFont
+  put ObjC_NSFontName(tNSFont ) into tNSString
+  put "\nFont Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontDisplayName(tNSFont ) into tNSString
+  put "\nDisplay Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontFamilyName(tNSFont) into tNSString
+  put "\nFamily Name:" & StringFromNSString(tNSString) after tStr
+  put "\nPoint Size:" & ObjC_NSFontPointSize(tNSFont) formatted as string after tStr
+  put "\nGlyph Count:" & ObjC_NSFontGlyphCount(tNSFont) formatted as string after tStr
+
+  put "\n\nPALETTE FONT:" after tStr
+  put ObjC_NSFontPaletteFontOfSize(0) into tNSFont
+  put ObjC_NSFontName(tNSFont ) into tNSString
+  put "\nFont Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontDisplayName(tNSFont ) into tNSString
+  put "\nDisplay Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontFamilyName(tNSFont) into tNSString
+  put "\nFamily Name:" & StringFromNSString(tNSString) after tStr
+  put "\nPoint Size:" & ObjC_NSFontPointSize(tNSFont) formatted as string after tStr
+  put "\nGlyph Count:" & ObjC_NSFontGlyphCount(tNSFont) formatted as string after tStr
+
+  put "\n\nTOOLTIPS FONT:" after tStr
+  put ObjC_NSFontToolTipsFontOfSize(0) into tNSFont
+  put ObjC_NSFontName(tNSFont ) into tNSString
+  put "\nFont Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontDisplayName(tNSFont ) into tNSString
+  put "\nDisplay Name:" & StringFromNSString(tNSString) after tStr
+  put ObjC_NSFontFamilyName(tNSFont) into tNSString
+  put "\nFamily Name:" & StringFromNSString(tNSString) after tStr
+  put "\nPoint Size:" & ObjC_NSFontPointSize(tNSFont) formatted as string after tStr
+  put "\nGlyph Count:" & ObjC_NSFontGlyphCount(tNSFont) formatted as string after tStr
   end unsafe
-	return tStr
-end handler
-
-
-public handler NSFontSystemFont(in pSize as CUInt ) returns String
-  variable tNSString as ObjcId
-  variable tNSFont as ObjcId
-  variable tNSNumber as ObjcId
-
-  variable tStr as String
-  put "\r\n" into tStr
-  unsafe
-     put ObjC_NSFontSystemFontOfSize(pSize) into tNSFont
-    -- LogNSObjectClassName( tNSFont )
-
-	put ObjC_NSFontName(tNSFont ) into tNSString
-	put "Font Name:" & StringFromNSString(tNSString) into tStr
-	-- set the textFont of stack "Home" to ".AppleSystemUIFont" --  this seems to work!
-
-	put ObjC_NSFontDisplayName(tNSFont ) into tNSString
-	put "\nDisplay Name:" & StringFromNSString(tNSString) after tStr
-      -- set the textFont of stack "Home" to "System Font" --  this also seems to work!
-
-      put ObjC_NSFontFamilyName(tNSFont) into tNSString
- 	put "\nFamily Name:" & StringFromNSString(tNSString) after tStr
-
-	put "\nPoint Size:" & ObjC_NSFontPointSize(tNSFont) formatted as string after tStr
-
-	put "\nGlyph Count:" & ObjC_NSFontGlyphCount(tNSFont) formatted as string after tStr
-
--- NOT WORKING
-	-- put "\nSmall Point Size:" & ObjC_NSFontSmallSystemFontSize() formatted as string after tStr
-
-  end unsafe
-	return tStr
+  return tStr
 end handler
 
 public handler NSFontSystemFontForControlSize(in pSize as CUInt ) returns CUint
@@ -251,11 +324,9 @@ public handler NSFontSystemFontForControlSize(in pSize as CUInt ) returns CUint
   variable tNSFont as ObjcId
   variable tNSNumber as ObjcId
   variable tStr as String
-
   unsafe
      put ObjC_NSFontSystemFontOfSize(pSize) into tNSFont
     	-- LogNSObjectClassName( tNSFont )
-
 	-- Enums taken from MS .NET docs:
 	-- Regular	0
 	-- Small	1

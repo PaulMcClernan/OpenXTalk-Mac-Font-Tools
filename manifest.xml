@@ -23,8 +23,7 @@
   <handler name="NSArrayToString" parameters="in ObjcObject" return="string"/>
   <handler name="GetFontURLs" parameters="" return="string"/>
   <handler name="ShowFontPanel" parameters="" return="nothing"/>
-  <handler name="NSFontTitleBarFont" parameters="in CUInt" return="string"/>
-  <handler name="NSFontSystemFont" parameters="in CUInt" return="string"/>
+  <handler name="NSFontSystemFonts" parameters="" return="string"/>
   <handler name="NSFontSystemFontForControlSize" parameters="in CUInt" return="CUint"/>
   <handler name="NSFontManagerAvaialableFonts" parameters="" return="string"/>
   <handler name="NSFontManagerAvaialableFontFamilies" parameters="" return="string"/>

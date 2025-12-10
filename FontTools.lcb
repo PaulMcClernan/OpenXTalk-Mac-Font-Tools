@@ -8,7 +8,7 @@ library org.openxtalk.library.macfonttools
 
   metadata title is "FontTools (Mac)"
   metadata author is "Paul McClernan"
-  metadata version is "0.3.0"
+  metadata version is "0.4.0"
 
 
   private type NSUInteger is CULong
@@ -91,11 +91,29 @@ private foreign handler ObjC_NSFontManagerAvailableFontFamilies(in pNSFontManage
 private foreign handler ObjC_NSFontManagerAvailableFonts(in pNSFontManager as ObjcId ) returns ObjcId binds to "objc:NSFontManager.-availableFonts"
 private foreign handler ObjC_NSFontManagerAvailableMembers( in pNSFontManager as ObjcId, in pFontFamNSString as ObjcId ) returns optional ObjcId binds to "objc:NSFontManager.-availableMembersOfFontFamily:"
 
+
+--- NOT WORKING
 private foreign handler ObjC_NSFontCollectionAllCollectionNames( in pNSFontCollection as ObjcId ) returns ObjcId binds to "objc:NSFontCollection.allCollectionNames"
 -- NSFontCollection CollectionNames is deprecated as of macOS 11 (BigSur)
 private foreign handler ObjC_NSFontCollectionCollectionNames( in pNSFontCollection as ObjcId ) returns ObjcId binds to "objc:NSFontCollection.allFontCollectionNames"
 private foreign handler ObjC_NSFontCollectionAlloc() returns  ObjcRetainedId binds to "objc:NSFontCollection.+alloc"
 private foreign handler ObjC_NSFontCollectionInit( in pNSFontCollection as ObjcId ) returns ObjcId binds to "objc:NSFontCollection.-init"
+
+
+private foreign handler ObjC_NSFontSystemFontOfSize(in pSize as CUInt ) returns ObjcId binds to "objc:NSFont.+systemFontOfSize:"
+private foreign handler ObjC_NSFontTitleBarFontOfSize(in pSize as CUInt ) returns ObjcId binds to "objc:NSFont.+titleBarFontOfSize:"
+
+private foreign handler ObjC_NSFontFamilyName( in NSFont as ObjcId ) returns ObjcId binds to "objc:NSFont.familyName"
+private foreign handler ObjC_NSFontName( in NSFont as ObjcId ) returns ObjcId binds to "objc:NSFont.fontName"
+private foreign handler ObjC_NSFontDisplayName( in NSFont as ObjcId ) returns ObjcId binds to "objc:NSFont.displayName"
+private foreign handler ObjC_NSFontPointSize( in NSFont as ObjcId ) returns NaturalFloat binds to "objc:NSFont.pointSize"
+private foreign handler ObjC_NSFontSmallSystemFontSize() returns NaturalFloat binds to "objc:NSFont.smallSystemFontSize"
+
+private foreign handler ObjC_NSFontGlyphCount( in NSFont as ObjcId ) returns CUInt binds to "objc:NSFont.numberOfGlyphs"
+
+--- NOT WORKING
+private foreign handler ObjC_NSFontSystemFontSizeForControlSize( in NSFont as ObjcId, in pCtrlSize as CUInt ) returns CUInt binds to "objc:NSFont.-systemFontSizeForControlSize:"
+
 
 -- Getting the Shared NSFontPanel Instance:
 private foreign handler ObjC_NSFontPanelSharedFontPanel() returns ObjcId binds to "objc:NSFontPanel.+sharedFontPanel"
@@ -129,6 +147,92 @@ public handler ShowFontPanel() returns nothing
      -- Do something with the selected font, e.g. return font name as a text string
    end unsafe
 end handler
+
+public handler NSFontTitleBarFont(in pSize as CUInt ) returns String
+  variable tNSString as ObjcId
+  variable tNSFont as ObjcId
+  variable tNSNumber as ObjcId
+
+  variable tStr as String
+  put "\r\n" into tStr
+  unsafe
+     put ObjC_NSFontTitleBarFontOfSize(pSize) into tNSFont
+    -- LogNSObjectClassName( tNSFont )
+
+	put ObjC_NSFontName(tNSFont ) into tNSString
+	put "Font Name:" & StringFromNSString(tNSString) into tStr
+	-- set the textFont of stack "Home" to ".AppleSystemUIFont" --  this seems to work!
+
+	put ObjC_NSFontDisplayName(tNSFont ) into tNSString
+	put "\nDisplay Name:" & StringFromNSString(tNSString) after tStr
+      -- set the textFont of stack "Home" to "System Font" --  this also seems to work!
+
+      put ObjC_NSFontFamilyName(tNSFont) into tNSString
+ 	put "\nFamily Name:" & StringFromNSString(tNSString) after tStr
+
+	put "\nPoint Size:" & ObjC_NSFontPointSize(tNSFont) formatted as string after tStr
+
+	put "\nGlyph Count:" & ObjC_NSFontGlyphCount(tNSFont) formatted as string after tStr
+
+  end unsafe
+	return tStr
+end handler
+
+
+public handler NSFontSystemFont(in pSize as CUInt ) returns String
+  variable tNSString as ObjcId
+  variable tNSFont as ObjcId
+  variable tNSNumber as ObjcId
+
+  variable tStr as String
+  put "\r\n" into tStr
+  unsafe
+     put ObjC_NSFontSystemFontOfSize(pSize) into tNSFont
+    -- LogNSObjectClassName( tNSFont )
+
+	put ObjC_NSFontName(tNSFont ) into tNSString
+	put "Font Name:" & StringFromNSString(tNSString) into tStr
+	-- set the textFont of stack "Home" to ".AppleSystemUIFont" --  this seems to work!
+
+	put ObjC_NSFontDisplayName(tNSFont ) into tNSString
+	put "\nDisplay Name:" & StringFromNSString(tNSString) after tStr
+      -- set the textFont of stack "Home" to "System Font" --  this also seems to work!
+
+      put ObjC_NSFontFamilyName(tNSFont) into tNSString
+ 	put "\nFamily Name:" & StringFromNSString(tNSString) after tStr
+
+	put "\nPoint Size:" & ObjC_NSFontPointSize(tNSFont) formatted as string after tStr
+
+	put "\nGlyph Count:" & ObjC_NSFontGlyphCount(tNSFont) formatted as string after tStr
+
+-- NOT WORKING
+	-- put "\nSmall Point Size:" & ObjC_NSFontSmallSystemFontSize() formatted as string after tStr 
+
+  end unsafe
+	return tStr
+end handler
+
+public handler NSFontSystemFontForControlSize(in pSize as CUInt ) returns CUint
+  variable tNSString as ObjcId
+  variable tNSFont as ObjcId
+  variable tNSNumber as ObjcId
+  variable tStr as String
+
+  unsafe
+     put ObjC_NSFontSystemFontOfSize(pSize) into tNSFont
+    	-- LogNSObjectClassName( tNSFont )
+
+	-- Enums taken from MS .NET docs:
+	-- Regular	0	
+	-- Small	1	
+	-- Mini	2	
+	-- Large	3	
+	-- ExtraLarge	4
+	put "Point Size To use:" & ObjC_NSFontSystemFontSizeForControlSize( tNSFont, pSize) formatted as string into tStr
+  end unsafe
+	return tStr
+end handler
+
 
 public handler NSFontManagerAvaialableFonts() returns String
   variable tNSString as ObjcObject
@@ -178,6 +282,7 @@ public handler NSFontCollectionAllCollectionNames() returns String
   end unsafe
    return StringFromNSString(tNSString)
 end handler
+
 
 public handler NSFontManagerAvaialableMembersOfFontFamily(in pFamName as String) returns String
   variable tNSString as ObjcObject

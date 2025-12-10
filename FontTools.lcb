@@ -91,7 +91,6 @@ private foreign handler ObjC_NSFontManagerAvailableFontFamilies(in pNSFontManage
 private foreign handler ObjC_NSFontManagerAvailableFonts(in pNSFontManager as ObjcId ) returns ObjcId binds to "objc:NSFontManager.-availableFonts"
 private foreign handler ObjC_NSFontManagerAvailableMembers( in pNSFontManager as ObjcId, in pFontFamNSString as ObjcId ) returns optional ObjcId binds to "objc:NSFontManager.-availableMembersOfFontFamily:"
 
-
 --- NOT WORKING
 private foreign handler ObjC_NSFontCollectionAllCollectionNames( in pNSFontCollection as ObjcId ) returns ObjcId binds to "objc:NSFontCollection.allCollectionNames"
 -- NSFontCollection CollectionNames is deprecated as of macOS 11 (BigSur)
@@ -99,9 +98,21 @@ private foreign handler ObjC_NSFontCollectionCollectionNames( in pNSFontCollecti
 private foreign handler ObjC_NSFontCollectionAlloc() returns  ObjcRetainedId binds to "objc:NSFontCollection.+alloc"
 private foreign handler ObjC_NSFontCollectionInit( in pNSFontCollection as ObjcId ) returns ObjcId binds to "objc:NSFontCollection.-init"
 
-
 private foreign handler ObjC_NSFontSystemFontOfSize(in pSize as CUInt ) returns ObjcId binds to "objc:NSFont.+systemFontOfSize:"
+-- The Bold Sytem Font returns samef value as TitleBar Font:
+private foreign handler ObjC_NSFontBoldSystemFontOfSize(in pSize as CUInt ) returns ObjcId binds to "objc:NSFont.+boldSystemFontOfSize:"
+-- used for interface labels:
+private foreign handler ObjC_NSFontLabelFontOfSize(in pSize as CUInt ) returns ObjcId binds to "objc:NSFont.+labelFontOfSize:"
+-- used for button labels, menu items, etc.
+private foreign handler ObjC_NSFontMessageFontOfSize(in pSize as CUInt ) returns ObjcId binds to "objc:NSFont.+messageFontOfSize:"
+-- used for menu bar items -- may not be the same as menu items
+private foreign handler ObjC_NSFontMenuBarFontOfSize(in pSize as CUInt ) returns ObjcId binds to "objc:NSFont.+menuBarFontOfSize:"
+-- used for menu items
+private foreign handler ObjC_NSFontMenuFontOfSize(in pSize as CUInt ) returns ObjcId binds to "objc:NSFont.+menuFontOfSize:"
+private foreign handler ObjC_NSFontControlContentFontOfSize(in pSize as CUInt ) returns ObjcId binds to "objc:NSFont.+controlContentFontOfSize:"
 private foreign handler ObjC_NSFontTitleBarFontOfSize(in pSize as CUInt ) returns ObjcId binds to "objc:NSFont.+titleBarFontOfSize:"
+private foreign handler ObjC_NSFontPaletteFontOfSize(in pSize as CUInt ) returns ObjcId binds to "objc:NSFont.+paletteFontOfSize:"
+private foreign handler ObjC_NSFontToolTipsFontOfSize(in pSize as CUInt ) returns ObjcId binds to "objc:NSFont.+toolTipsFontOfSize:"
 
 private foreign handler ObjC_NSFontFamilyName( in NSFont as ObjcId ) returns ObjcId binds to "objc:NSFont.familyName"
 private foreign handler ObjC_NSFontName( in NSFont as ObjcId ) returns ObjcId binds to "objc:NSFont.fontName"
@@ -110,11 +121,34 @@ private foreign handler ObjC_NSFontPointSize( in NSFont as ObjcId ) returns Natu
 private foreign handler ObjC_NSFontSmallSystemFontSize() returns NaturalFloat binds to "objc:NSFont.smallSystemFontSize"
 
 private foreign handler ObjC_NSFontGlyphCount( in NSFont as ObjcId ) returns CUInt binds to "objc:NSFont.numberOfGlyphs"
-
 --- NOT WORKING
-private foreign handler ObjC_NSFontSystemFontSizeForControlSize( in NSFont as ObjcId, in pCtrlSize as CUInt ) returns CUInt binds to "objc:NSFont.-systemFontSizeForControlSize:"
+private foreign handler ObjC_NSFontSystemFontSizeForControlSize( in NSFont as ObjcId, in pCtrlSize as CUInt ) returns CFloat binds to "objc:NSFont.-systemFontSizeForControlSize:"
 
+/*
+Weight is NSFontWeight
+typedef CGFloat NSFontWeight;
 
+Font Weights
+NSFontWeightUltraLight
+The font weight for system ultra light font.
+NSFontWeightThin
+The font weight for system thin font.
+NSFontWeightLight
+The font weight for system light font.
+NSFontWeightRegular
+The font weight for system regular font.
+NSFontWeightMedium
+The font weight for system medium font.
+NSFontWeightSemibold
+The font weight for system semibold font.
+NSFontWeightBold
+The font weight for system bold font.
+NSFontWeightHeavy
+The font weight for system heavy font.
+NSFontWeightBlack
+The font weight for system black font.
+*/
+----------------------------------------------------
 -- Getting the Shared NSFontPanel Instance:
 private foreign handler ObjC_NSFontPanelSharedFontPanel() returns ObjcId binds to "objc:NSFontPanel.+sharedFontPanel"
 -- Making the NSFontPanel Visible:
@@ -206,7 +240,7 @@ public handler NSFontSystemFont(in pSize as CUInt ) returns String
 	put "\nGlyph Count:" & ObjC_NSFontGlyphCount(tNSFont) formatted as string after tStr
 
 -- NOT WORKING
-	-- put "\nSmall Point Size:" & ObjC_NSFontSmallSystemFontSize() formatted as string after tStr 
+	-- put "\nSmall Point Size:" & ObjC_NSFontSmallSystemFontSize() formatted as string after tStr
 
   end unsafe
 	return tStr
@@ -223,10 +257,10 @@ public handler NSFontSystemFontForControlSize(in pSize as CUInt ) returns CUint
     	-- LogNSObjectClassName( tNSFont )
 
 	-- Enums taken from MS .NET docs:
-	-- Regular	0	
-	-- Small	1	
-	-- Mini	2	
-	-- Large	3	
+	-- Regular	0
+	-- Small	1
+	-- Mini	2
+	-- Large	3
 	-- ExtraLarge	4
 	put "Point Size To use:" & ObjC_NSFontSystemFontSizeForControlSize( tNSFont, pSize) formatted as string into tStr
   end unsafe

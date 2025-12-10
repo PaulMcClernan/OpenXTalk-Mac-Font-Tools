@@ -2,7 +2,7 @@
   <name>org.openxtalk.library.macfonttools</name>
   <title>FontTools (Mac)</title>
   <author>Paul McClernan</author>
-  <version>0.3.0</version>
+  <version>0.4.0</version>
   <license>community</license>
   <type>library</type>
   <requires name="com.livecode.foreign"/>
@@ -23,6 +23,9 @@
   <handler name="NSArrayToString" parameters="in ObjcObject" return="string"/>
   <handler name="GetFontURLs" parameters="" return="string"/>
   <handler name="ShowFontPanel" parameters="" return="nothing"/>
+  <handler name="NSFontTitleBarFont" parameters="in CUInt" return="string"/>
+  <handler name="NSFontSystemFont" parameters="in CUInt" return="string"/>
+  <handler name="NSFontSystemFontForControlSize" parameters="in CUInt" return="CUint"/>
   <handler name="NSFontManagerAvaialableFonts" parameters="" return="string"/>
   <handler name="NSFontManagerAvaialableFontFamilies" parameters="" return="string"/>
   <handler name="NSFontCollectionAllCollectionNames" parameters="" return="string"/>

@@ -50,7 +50,6 @@ library org.openxtalk.library.macfonttools
      end if
   end handler
 
-
   public foreign handler ObjC_NSArrayAlloc() returns ObjcRetainedId binds to "objc:NSArray.+alloc"
   public foreign handler ObjC_NSArrayComponentsJoinedByString(in pObj as ObjcId, in pSeperator as ObjcId) returns ObjcId binds to "objc:NSArray.-componentsJoinedByString:"
 
@@ -82,6 +81,24 @@ public handler GetFontURLs() returns String
     end unsafe
     return NSArrayToString(tCFArray)
 end handler
+
+/*
+public handler GetFontURL(in NSCTFont as ObjcID) returns String
+    variable tNSURLStrObj as ObjcObject
+    unsafe
+      put (CFURLRef)CTFontDescriptorCopyAttribute( NSCTFont, kCTFontURLAttribute) into tNSURLStrObj
+    end unsafe
+    return StringFromNSString(tNSURLStrObj)
+end handler
+-- CoreText
+// ... (inside a function)
+if let fontRef = CTFontDescriptorCreateWithNameAndSize("Arial" as CFString, 12) {
+    if let url = CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute) as? URL {
+        let filePath = url.path // This gives you the local file path
+        print(filePath)
+        CFRelease(fontRef)
+*/
+-- CFURLRef url = (CFURLRef)CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute);
 
 ------- Bindings strings for Apple's NSFonts FontManager FontPanel etc.---------
 -- Get the Shared NSFontManager Instance:
